@@ -1,5 +1,10 @@
 package application;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Random;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,9 +12,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 // added some comments
-public class PrototypeCode extends Application {
+public class phase3base extends Application {
     private Stage stage;
 
     @Override
@@ -128,6 +136,8 @@ public class PrototypeCode extends Application {
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> initializeHomeView());
+        
+        Text errorMessage = new Text();
 
         // Adding fields to the layout
         layout.add(new Label("First Name:"), 0, 0);
@@ -154,10 +164,69 @@ public class PrototypeCode extends Application {
         layout.add(confirmPasswordField, 1, 10);
         layout.add(registerButton, 1, 11);
         layout.add(backButton, 0, 11);
+        layout.add(errorMessage, 0, 12);
 
         Scene registerScene = new Scene(layout, 820, 520);
         stage.setScene(registerScene);
+       
+        
+         //creating the save button
+        registerButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
+        registerButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #ffffff;");
+        registerButton.setOnAction(e ->{  
+            if(firstNameField.getText().isEmpty() || lastNameField.getText().isEmpty() || birthDatePicker.getValue() == null || phoneField.getText().isEmpty() ||
+            		emailField.getText().isEmpty() || addressField.getText().isEmpty() || insuranceProviderField.getText().isEmpty() || policyNumberField.getText().isEmpty() ||
+            		pharmacyAddressField.getText().isEmpty()) {
+            	errorMessage.setText("Error: A field is missing");
+            } else {
+            	saveFile(firstNameField.getText(), lastNameField.getText(), birthDatePicker.getValue(), phoneField.getText(),
+            			emailField.getText(), addressField.getText(), insuranceProviderField.getText(), policyNumberField.getText(), pharmacyAddressField.getText(), errorMessage);
+            	firstNameField.clear();
+            	lastNameField.clear();
+            	birthDatePicker.setValue(null);
+            	phoneField.clear();
+            	emailField.clear();
+            	addressField.clear();
+            	insuranceProviderField.clear();
+            	policyNumberField.clear();
+            	pharmacyAddressField.clear();
+            	passwordField.clear();
+            	confirmPasswordField.clear();
+         }}); //saving the information gathered
+          
     }
+    
+    private String idGenerator() {  //generates a random 5 digit number
+    	Random randomNumber = new Random();
+        int randomNum = randomNumber.nextInt(90000) + 10000;
+    	return String.valueOf(randomNum);
+    }
+
+    
+    
+    private void saveFile(String firstNameField, String lastNameField, LocalDate birthDatePicker, String phoneField, //save all of the information gathered
+            String emailField, String addressField, String insuranceProviderField, String policyNumberField, String pharmacyAddressField, Text errorMessage) {
+    	String patientID = idGenerator();
+    	String patientFile = (patientID + "_PatientInfo.txt"); //making sure the file name is correctly formatted
+
+    	try (FileWriter writer = new FileWriter(patientFile)) { //creating the file and writing to it so that information can be properly stored
+    		writer.write(firstNameField + "\n");
+			writer.write(lastNameField + "\n");
+			writer.write(birthDatePicker + "\n");
+			writer.write(phoneField + "\n");
+			writer.write(emailField + "\n");
+			writer.write(addressField + "\n");
+			writer.write(insuranceProviderField + "\n");
+			writer.write(policyNumberField + "\n");
+			writer.write(pharmacyAddressField + "\n");
+		System.out.println("Information successfully saved to " + patientFile);
+		errorMessage.setText("Patient ID Created: " + patientID);
+		errorMessage.setFont(Font.font("Helvetica", 18));
+	} catch (IOException e) {
+		errorMessage.setText("Error, information not properly collected: " + e.getMessage());
+	}
+}
+    		
 
  // Add to the PrototypeCode class
 
@@ -270,4 +339,3 @@ public class PrototypeCode extends Application {
         launch(args);
     }
 }
-
