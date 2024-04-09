@@ -71,7 +71,7 @@ public class phase3base extends Application {
         userTypeComboBox.setValue("Patient");
 
         TextField usernameField = new TextField();
-        usernameField.setPromptText("5 Digit Patient ID");
+        usernameField.setPromptText("5 Digit Valid ID");
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
 
@@ -147,7 +147,7 @@ public class phase3base extends Application {
 
         layout.add(userTypeLabel, 0, 0);
         layout.add(userTypeComboBox, 1, 0);
-        layout.add(new Label("Patient ID:"), 0, 1);
+        layout.add(new Label("Enter ID:"), 0, 1);
         layout.add(usernameField, 1, 1);
         layout.add(new Label("Password:"), 0, 2);
         layout.add(passwordField, 1, 2);
