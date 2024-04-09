@@ -405,7 +405,6 @@ public class NurseView extends Application {
         layout.setAlignment(Pos.CENTER);
         Text errorMessage = new Text();
         Text successMessage = new Text();
-
         // Check-in process
         TextField patientIDField = new TextField();
         patientIDField.setPromptText("Enter Patient ID for Check-In");
@@ -425,12 +424,11 @@ public class NurseView extends Application {
                 }
             }
         });
-
         // Record patient vitals
         Button recordVitalsButton = new Button("Record Patient Vitals");
         recordVitalsButton.setOnAction(e -> {
             String patientID = patientIDField.getText().trim();
-            // Makes sure the patient ID is 5 digits long
+            // makes sure the patientID is 5 digits long
             if (patientID.length() != 5 || !patientID.matches("\\d+")) {
                 errorMessage.setText("Error: Patient ID is invalid");
             } else {
@@ -442,16 +440,27 @@ public class NurseView extends Application {
                 }
             }
         });
-
         // View patient history
         Button viewHistoryButton = new Button("View Patient History");
         viewHistoryButton.setOnAction(e -> {
             // Placeholder for viewing patient history logic
+        	String patientID = patientIDField.getText().trim();
+            // makes sure the patient ID is 5 digits long
+            if (patientID.length() != 5 || !patientID.matches("\\d+")) {
+                errorMessage.setText("Error: Patient ID is invalid"); // if the patient ID is not 5 digits long, then an error is displayed
+            } else {
+                File patientFile = new File(patientID + "_PatientInfo.txt"); // // opens file if found
+                if (!patientFile.exists()) {
+                    errorMessage.setText("Error: Patient File is not found"); // if file not found error is displayed
+                } else {
+                    displayPatientHistoryScene(patientID); // displays if the file is found
+                }
+            }
         });
-
+        // Back to home button
         Button backToHomeButton = new Button("Back to Home");
         backToHomeButton.setOnAction(e -> initializeHomeView());
-
+        // gathers all the components for the layout
         layout.getChildren().addAll(new Label("Nurse Portal"), patientIDField, checkInButton, recordVitalsButton, viewHistoryButton, backToHomeButton, errorMessage, successMessage);
         Scene nursePortalScene = new Scene(layout, 820, 520);
         stage.setScene(nursePortalScene);
@@ -463,20 +472,17 @@ public class NurseView extends Application {
         layout.setVgap(10);
         layout.setHgap(10);
         layout.setPadding(new Insets(25));
-
-        // Labels for vital signs
+        // labels for vital signs
         Label temperatureLabel = new Label("Temperature:");
         Label heartRateLabel = new Label("Heart Rate:");
         Label breathingRateLabel = new Label("Breathing Rate:");
         Label bloodPressureLabel = new Label("Blood Pressure:");
-
-        // Text fields for vital signs
+        // text fields for vital signs
         TextField temperatureField = new TextField();
         TextField heartRateField = new TextField();
         TextField breathingRateField = new TextField();
         TextField bloodPressureField = new TextField();
-
-        // Save button
+        // save button
         Button saveButton = new Button("Save Vitals");
         saveButton.setOnAction(e -> {
             // saves the vitals onto the uploadToPatientFile method
@@ -487,12 +493,10 @@ public class NurseView extends Application {
             uploadToPatientFile(patientID, temperature, heartRate, breathingRate, bloodPressure);
             // Add any additional logic here, such as displaying a success message
         });
-
         // Back button
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> displayNursePortal());
-
-        // Add the components to the layout
+        // adds the components to the layout
         layout.add(temperatureLabel, 0, 0);
         layout.add(temperatureField, 1, 0);
         layout.add(heartRateLabel, 0, 1);
@@ -503,30 +507,56 @@ public class NurseView extends Application {
         layout.add(bloodPressureField, 1, 3);
         layout.add(saveButton, 1, 4);
         layout.add(backButton, 0, 4);
-
         Scene recordVitalScene = new Scene(layout, 820, 520);
         stage.setScene(recordVitalScene);
     }
 
     private void uploadToPatientFile(String patientID, double temperature, int heartRate, int breathingRate, int bloodPressure) {
         try {
-            // Open the patient file for appending
+            // makes the FileWriter where it than reads the _PatientInfo.txt file and is then
+        	// able to be edited
             FileWriter fw = new FileWriter(patientID + "_PatientInfo.txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
 
-            // Write the new vital signs to the file
+            // writes the new vital signs to the file
             bw.write("Temperature: " + temperature + "\n");
             bw.write("Heart Rate: " + heartRate + "\n");
             bw.write("Breathing Rate: " + breathingRate + "\n");
             bw.write("Blood Pressure: " + bloodPressure + "\n");
             bw.newLine(); // Add a new line for readability
-
+            // closes the file reader/writer and buffered reader/writer
             bw.close();
             fw.close();
             System.out.println("Vitals successfully saved to " + patientID + "_PatientInfo.txt");
         } catch (IOException e) {
             System.out.println("Error writing to file: " + e.getMessage());
         }
+    }
+    // where it displays the patient history window
+    private void displayPatientHistoryScene(String patientID)
+    {
+    	VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        // this is so it reads through all the lines of the file
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get(patientID + "_PatientInfo.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        TextArea historyTextArea = new TextArea(); // this is where the patient history is then displayed
+        historyTextArea.setEditable(false);
+        for (String line : lines) {
+            historyTextArea.appendText(line + "\n");
+        }
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> displayNursePortal());
+        layout.getChildren().addAll(new Label("Patient History"), historyTextArea, backButton);
+        Scene patientHistoryScene = new Scene(layout, 820, 520);
+        stage.setScene(patientHistoryScene);
     }
 	private void displayDoctorPortal() {
         VBox layout = new VBox(10);
