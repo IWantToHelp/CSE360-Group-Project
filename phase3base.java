@@ -262,6 +262,137 @@ public class phase3base extends Application {
           
     }
     
+    
+    
+    private void updatePatientInfo() {
+        GridPane layout = new GridPane();
+        layout.setAlignment(Pos.CENTER);
+        layout.setVgap(10);
+        layout.setHgap(10);
+        layout.setPadding(new Insets(25));
+
+        // Creating form fields for patient registration
+        TextField firstNameField = new TextField();
+        firstNameField.setPromptText("First Name");
+        TextField lastNameField = new TextField();
+        lastNameField.setPromptText("Last Name");
+        DatePicker birthDatePicker = new DatePicker();
+        birthDatePicker.setPromptText("Birth Date");
+        TextField phoneField = new TextField();
+        phoneField.setPromptText("Phone Number");
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email");
+        TextField addressField = new TextField();
+        addressField.setPromptText("Home Address");
+        TextField insuranceProviderField = new TextField();
+        insuranceProviderField.setPromptText("Insurance Provider");
+        TextField policyNumberField = new TextField();
+        policyNumberField.setPromptText("Policy Number");
+        TextField pharmacyAddressField = new TextField();
+        pharmacyAddressField.setPromptText("Preferred Pharmacy Address");
+        TextField patientIDField = new TextField();
+        patientIDField.setPromptText("Enter your ID");
+        // Password fields for account creation
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Create Password");
+        PasswordField confirmPasswordField = new PasswordField();
+        confirmPasswordField.setPromptText("Confirm Password");
+
+        // Registration button
+        Button saveButton = new Button("Save");
+        // Placeholder for registration logic; add actual logic for handling registration
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> initializeHomeView());
+        
+        Text errorMessage = new Text();
+
+        // Adding fields to the layout
+        layout.add(new Label("First Name:"), 0, 0);
+        layout.add(firstNameField, 1, 0);
+        layout.add(new Label("Last Name:"), 0, 1);
+        layout.add(lastNameField, 1, 1);
+        layout.add(new Label("Date of Birth:"), 0, 2);
+        layout.add(birthDatePicker, 1, 2);
+        layout.add(new Label("Phone Number:"), 0, 3);
+        layout.add(phoneField, 1, 3);
+        layout.add(new Label("Email Address:"), 0, 4);
+        layout.add(emailField, 1, 4);
+        layout.add(new Label("Home Address:"), 0, 5);
+        layout.add(addressField, 1, 5);
+        layout.add(new Label("Insurance Provider:"), 0, 6);
+        layout.add(insuranceProviderField, 1, 6);
+        layout.add(new Label("Policy Number:"), 0, 7);
+        layout.add(policyNumberField, 1, 7);
+        layout.add(new Label("Preferred Pharmacy Address:"), 0, 8);
+        layout.add(pharmacyAddressField, 1, 8);
+        layout.add(new Label("Password:"), 0, 9);
+        layout.add(passwordField, 1, 9);
+        layout.add(new Label("Confirm Password:"), 0, 10);
+        layout.add(confirmPasswordField, 1, 10);
+        layout.add(new Label("Enter ID:"), 0, 11);
+        layout.add(patientIDField, 1, 11);
+        
+        layout.add(saveButton, 1, 12);
+        layout.add(backButton, 0, 12);
+        layout.add(errorMessage, 0, 13);
+
+        Scene updateScene = new Scene(layout, 820, 520);
+        stage.setScene(updateScene);
+       
+        //error handling if passwords aren't the same is needed
+        
+         //creating the save button
+        saveButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
+        saveButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #ffffff;");
+        saveButton.setOnAction(e ->{  
+            if(firstNameField.getText().isEmpty() || lastNameField.getText().isEmpty() || birthDatePicker.getValue() == null || phoneField.getText().isEmpty() ||
+            		emailField.getText().isEmpty() || addressField.getText().isEmpty() || insuranceProviderField.getText().isEmpty() || policyNumberField.getText().isEmpty() ||
+            		pharmacyAddressField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPasswordField.getText().isEmpty() || patientIDField.getText().isEmpty()){
+            	errorMessage.setText("Error: A field is missing");
+            } else {
+            	updatePatientFile(patientIDField.getText(), firstNameField.getText(), lastNameField.getText(), birthDatePicker.getValue(), phoneField.getText(),
+            			emailField.getText(), addressField.getText(), insuranceProviderField.getText(), policyNumberField.getText(), pharmacyAddressField.getText(), passwordField.getText(), confirmPasswordField.getText(), errorMessage);
+            	patientIDField.clear();
+            	firstNameField.clear();
+            	lastNameField.clear();
+            	birthDatePicker.setValue(null);
+            	phoneField.clear();
+            	emailField.clear();
+            	addressField.clear();
+            	insuranceProviderField.clear();
+            	policyNumberField.clear();
+            	pharmacyAddressField.clear();
+            	passwordField.clear();
+            	confirmPasswordField.clear();
+         }}); //saving the information gathered
+    }
+    
+    
+    private void updatePatientFile(String originalPatientID, String firstNameField, String lastNameField, LocalDate birthDatePicker, String phoneField, //save all of the information gathered
+            String emailField, String addressField, String insuranceProviderField, String policyNumberField, String pharmacyAddressField, String passwordField, String confirmPasswordField, Text errorMessage) {
+    	String patientFile = (originalPatientID + "_PatientInfo.txt"); //making sure the file name is correctly formatted
+
+    	try (FileWriter writer = new FileWriter(patientFile)) { //creating the file and writing to it so that information can be properly stored
+    		writer.write(originalPatientID + "\n");
+    		writer.write(passwordField + "\n");
+    		writer.write(firstNameField + "\n");
+			writer.write(lastNameField + "\n");
+			writer.write(birthDatePicker + "\n");
+			writer.write(phoneField + "\n");
+			writer.write(emailField + "\n");
+			writer.write(addressField + "\n");
+			writer.write(insuranceProviderField + "\n");
+			writer.write(policyNumberField + "\n");
+			writer.write(pharmacyAddressField + "\n");
+		System.out.println("Information successfully saved to " + patientFile);
+		errorMessage.setText("Patient ID: " + originalPatientID);
+		errorMessage.setFont(Font.font("Helvetica", 18));
+	} catch (IOException e) {
+		errorMessage.setText("Error, information not properly collected: " + e.getMessage());
+	}
+}
+    
     private String idGenerator() {  //generates a random 5 digit number
     	Random randomNumber = new Random();
         int randomNum = randomNumber.nextInt(90000) + 10000;
@@ -306,7 +437,7 @@ public class phase3base extends Application {
         // Patient's personal information section
         Button updateInfoButton = new Button("Update Personal Information");
         updateInfoButton.setOnAction(e -> {
-            // Placeholder for update information logic
+            updatePatientInfo();
         });
 
         // Viewing past visits and health records
