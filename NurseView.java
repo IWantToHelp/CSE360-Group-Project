@@ -268,40 +268,169 @@ public class NurseView extends Application {
         Scene patientPortalScene = new Scene(layout, 820, 520);
         stage.setScene(patientPortalScene);
     }
+    
+    private void updatePatientInfo() {
+        GridPane layout = new GridPane();
+        layout.setAlignment(Pos.CENTER);
+        layout.setVgap(10);
+        layout.setHgap(10);
+        layout.setPadding(new Insets(25));
 
+        // Creating form fields for patient registration
+        TextField firstNameField = new TextField();
+        firstNameField.setPromptText("First Name");
+        TextField lastNameField = new TextField();
+        lastNameField.setPromptText("Last Name");
+        DatePicker birthDatePicker = new DatePicker();
+        birthDatePicker.setPromptText("Birth Date");
+        TextField phoneField = new TextField();
+        phoneField.setPromptText("Phone Number");
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email");
+        TextField addressField = new TextField();
+        addressField.setPromptText("Home Address");
+        TextField insuranceProviderField = new TextField();
+        insuranceProviderField.setPromptText("Insurance Provider");
+        TextField policyNumberField = new TextField();
+        policyNumberField.setPromptText("Policy Number");
+        TextField pharmacyAddressField = new TextField();
+        pharmacyAddressField.setPromptText("Preferred Pharmacy Address");
+        TextField patientIDField = new TextField();
+        patientIDField.setPromptText("Enter your ID");
+        // Password fields for account creation
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Create Password");
+        PasswordField confirmPasswordField = new PasswordField();
+        confirmPasswordField.setPromptText("Confirm Password");
+
+        // Registration button
+        Button saveButton = new Button("Save");
+        // Placeholder for registration logic; add actual logic for handling registration
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> initializeHomeView());
+
+        Text errorMessage = new Text();
+
+        // Adding fields to the layout
+        layout.add(new Label("First Name:"), 0, 0);
+        layout.add(firstNameField, 1, 0);
+        layout.add(new Label("Last Name:"), 0, 1);
+        layout.add(lastNameField, 1, 1);
+        layout.add(new Label("Date of Birth:"), 0, 2);
+        layout.add(birthDatePicker, 1, 2);
+        layout.add(new Label("Phone Number:"), 0, 3);
+        layout.add(phoneField, 1, 3);
+        layout.add(new Label("Email Address:"), 0, 4);
+        layout.add(emailField, 1, 4);
+        layout.add(new Label("Home Address:"), 0, 5);
+        layout.add(addressField, 1, 5);
+        layout.add(new Label("Insurance Provider:"), 0, 6);
+        layout.add(insuranceProviderField, 1, 6);
+        layout.add(new Label("Policy Number:"), 0, 7);
+        layout.add(policyNumberField, 1, 7);
+        layout.add(new Label("Preferred Pharmacy Address:"), 0, 8);
+        layout.add(pharmacyAddressField, 1, 8);
+        layout.add(new Label("Password:"), 0, 9);
+        layout.add(passwordField, 1, 9);
+        layout.add(new Label("Confirm Password:"), 0, 10);
+        layout.add(confirmPasswordField, 1, 10);
+        layout.add(new Label("Enter ID:"), 0, 11);
+        layout.add(patientIDField, 1, 11);
+
+        layout.add(saveButton, 1, 12);
+        layout.add(backButton, 0, 12);
+        layout.add(errorMessage, 0, 13);
+
+        Scene updateScene = new Scene(layout, 820, 520);
+        stage.setScene(updateScene);
+
+        //error handling if passwords aren't the same is needed
+
+         //creating the save button
+        saveButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
+        saveButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #ffffff;");
+        saveButton.setOnAction(e ->{  
+            if(firstNameField.getText().isEmpty() || lastNameField.getText().isEmpty() || birthDatePicker.getValue() == null || phoneField.getText().isEmpty() ||
+            		emailField.getText().isEmpty() || addressField.getText().isEmpty() || insuranceProviderField.getText().isEmpty() || policyNumberField.getText().isEmpty() ||
+            		pharmacyAddressField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPasswordField.getText().isEmpty() || patientIDField.getText().isEmpty()){
+            	errorMessage.setText("Error: A field is missing");
+            } else {
+            	updatePatientFile(patientIDField.getText(), firstNameField.getText(), lastNameField.getText(), birthDatePicker.getValue(), phoneField.getText(),
+            			emailField.getText(), addressField.getText(), insuranceProviderField.getText(), policyNumberField.getText(), pharmacyAddressField.getText(), passwordField.getText(), confirmPasswordField.getText(), errorMessage);
+            	patientIDField.clear();
+            	firstNameField.clear();
+            	lastNameField.clear();
+            	birthDatePicker.setValue(null);
+            	phoneField.clear();
+            	emailField.clear();
+            	addressField.clear();
+            	insuranceProviderField.clear();
+            	policyNumberField.clear();
+            	pharmacyAddressField.clear();
+            	passwordField.clear();
+            	confirmPasswordField.clear();
+         }}); //saving the information gathered
+    }
+
+
+    private void updatePatientFile(String originalPatientID, String firstNameField, String lastNameField, LocalDate birthDatePicker, String phoneField, //save all of the information gathered
+            String emailField, String addressField, String insuranceProviderField, String policyNumberField, String pharmacyAddressField, String passwordField, String confirmPasswordField, Text errorMessage) {
+    	String patientFile = (originalPatientID + "_PatientInfo.txt"); //making sure the file name is correctly formatted
+
+    	try (FileWriter writer = new FileWriter(patientFile)) { //creating the file and writing to it so that information can be properly stored
+    		writer.write(originalPatientID + "\n");
+    		writer.write(passwordField + "\n");
+    		writer.write(firstNameField + "\n");
+			writer.write(lastNameField + "\n");
+			writer.write(birthDatePicker + "\n");
+			writer.write(phoneField + "\n");
+			writer.write(emailField + "\n");
+			writer.write(addressField + "\n");
+			writer.write(insuranceProviderField + "\n");
+			writer.write(policyNumberField + "\n");
+			writer.write(pharmacyAddressField + "\n");
+		System.out.println("Information successfully saved to " + patientFile);
+		errorMessage.setText("Patient ID: " + originalPatientID);
+		errorMessage.setFont(Font.font("Helvetica", 18));
+	} catch (IOException e) {
+		errorMessage.setText("Error, information not properly collected: " + e.getMessage());
+	}
+}
+
+    // Nurse Portal
     private void displayNursePortal() {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
-    	Text errorMessage = new Text(); // for the errorMessage in the Nurse Portal
-    	Text successMessage = new Text();
-        String patientID;
+        Text errorMessage = new Text();
+        Text successMessage = new Text();
 
         // Check-in process
         TextField patientIDField = new TextField();
         patientIDField.setPromptText("Enter Patient ID for Check-In");
         Button checkInButton = new Button("Check-In Patient");
-        patientID = patientIDField.getText().trim();
         checkInButton.setOnAction(e -> {
-        // Makes sure the patient ID is 5 digits long
-        if (patientID.length() != 5 || !patientID.matches("\\d+"))
-        {
-        	errorMessage.setText("Error: Patient ID is invalid");
-        }
-        File patientFile = new File(patientID + "_PatientInfo.txt"); // so it can find the _PatientInfo.txt file
-        // if patientFile not found it displays the error
-        if (!patientFile.exists())
-        {
-        	errorMessage.setText("Error: Patient File is not found");
-        } else {
-        	successMessage.setText("Successfully checked in " + patientID);
-        }
+            String patientID = patientIDField.getText().trim();
+            // Makes sure the patient ID is 5 digits long
+            if (patientID.length() != 5 || !patientID.matches("\\d+")) {
+                errorMessage.setText("Error: Patient ID is invalid");
+            } else {
+                File patientFile = new File(patientID + "_PatientInfo.txt");
+                // if patientFile not found it displays the error
+                if (!patientFile.exists()) {
+                    errorMessage.setText("Error: Patient File is not found");
+                } else {
+                    successMessage.setText("Successfully checked in " + patientID);
+                }
+            }
         });
-        
+
         // Record patient vitals
         Button recordVitalsButton = new Button("Record Patient Vitals");
         recordVitalsButton.setOnAction(e -> {
-            // When Patient ID is put into the 
+            String patientID = patientIDField.getText().trim();
+            // Makes sure the patient ID is 5 digits long
             if (patientID.length() != 5 || !patientID.matches("\\d+")) {
                 errorMessage.setText("Error: Patient ID is invalid");
             } else {
@@ -309,7 +438,7 @@ public class NurseView extends Application {
                 if (!patientFile.exists()) {
                     errorMessage.setText("Error: Patient File is not found");
                 } else {
-                    displayRecordVitalScene();
+                    displayRecordVitalScene(patientID);
                 }
             }
         });
@@ -318,21 +447,17 @@ public class NurseView extends Application {
         Button viewHistoryButton = new Button("View Patient History");
         viewHistoryButton.setOnAction(e -> {
             // Placeholder for viewing patient history logic
-        	
         });
 
         Button backToHomeButton = new Button("Back to Home");
         backToHomeButton.setOnAction(e -> initializeHomeView());
 
-        layout.getChildren().addAll(new Label("Nurse Portal"), patientIDField, checkInButton, recordVitalsButton, viewHistoryButton, backToHomeButton);
-
+        layout.getChildren().addAll(new Label("Nurse Portal"), patientIDField, checkInButton, recordVitalsButton, viewHistoryButton, backToHomeButton, errorMessage, successMessage);
         Scene nursePortalScene = new Scene(layout, 820, 520);
         stage.setScene(nursePortalScene);
     }
-    // made a seperate scene for the record vitals so it can be easier for the nurse
-    // to put the information and save it onto the file
-    private void displayRecordVitalScene() {
-    	String patientID = null; // had to set to null to make code happy
+
+    private void displayRecordVitalScene(String patientID) {
         GridPane layout = new GridPane();
         layout.setAlignment(Pos.CENTER);
         layout.setVgap(10);
@@ -354,12 +479,11 @@ public class NurseView extends Application {
         // Save button
         Button saveButton = new Button("Save Vitals");
         saveButton.setOnAction(e -> {
-        	// saves the vitals onto the uploadToPatientFile mehod
+            // saves the vitals onto the uploadToPatientFile method
             double temperature = Double.parseDouble(temperatureField.getText());
             int heartRate = Integer.parseInt(heartRateField.getText());
             int breathingRate = Integer.parseInt(breathingRateField.getText());
             int bloodPressure = Integer.parseInt(bloodPressureField.getText());
-            // here is where the information goes
             uploadToPatientFile(patientID, temperature, heartRate, breathingRate, bloodPressure);
             // Add any additional logic here, such as displaying a success message
         });
@@ -383,38 +507,27 @@ public class NurseView extends Application {
         Scene recordVitalScene = new Scene(layout, 820, 520);
         stage.setScene(recordVitalScene);
     }
-    // blanks for the nurseInputVitals because code was not happy
-    private String nurseInputVitals(String string) {
-		// TODO Auto-generated method stub
-    	double temperature;
-    	int heartRate;
-    	int breathingRate;
-    	int bloodPressure;
-    	return null;
-	}
-    // here is where the patient file gets updated
-    private void uploadToPatientFile(String patientID, double temperature, int heartRate, int breathingRate, int bloodPressure)
-    {
-    	// i made a buffered reader/writer so it can update the .txt files easier
-    	// compared to having to create multiple files, it just gets updated
-    	PrintWriter fw = null;
-    	try 
-    	{
-			fw = new PrintWriter(patientID + "_patientInfo.txt");
-			BufferedWriter bw = new BufferedWriter(fw);
-	        bw.write("Temperature: " + temperature + "\n");
-	        bw.write("Heart Rate: " + heartRate + "\n");
-	        bw.write("Breathing Rate: " + breathingRate + "\n");
-	        bw.write("Blood Pressure: " + bloodPressure + "\n");
-	        bw.newLine(); // Add a new line for readability
-	        bw.close();
-	        fw.close();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    		fw.close();
-    	}
+
+    private void uploadToPatientFile(String patientID, double temperature, int heartRate, int breathingRate, int bloodPressure) {
+        try {
+            // Open the patient file for appending
+            FileWriter fw = new FileWriter(patientID + "_PatientInfo.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            // Write the new vital signs to the file
+            bw.write("Temperature: " + temperature + "\n");
+            bw.write("Heart Rate: " + heartRate + "\n");
+            bw.write("Breathing Rate: " + breathingRate + "\n");
+            bw.write("Blood Pressure: " + bloodPressure + "\n");
+            bw.newLine(); // Add a new line for readability
+
+            bw.close();
+            fw.close();
+            System.out.println("Vitals successfully saved to " + patientID + "_PatientInfo.txt");
+        } catch (IOException e) {
+            System.out.println("Error writing to file: " + e.getMessage());
+        }
     }
-    
 	private void displayDoctorPortal() {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
