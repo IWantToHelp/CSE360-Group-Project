@@ -107,13 +107,14 @@ public class MessagingCode{
         	sendMessageButton.setOnAction(e -> {
         		writeMessage(currentMessage.getText(), fromActor, toActor);
         		pastMessages.setText(retrievePastMessages(fromActor, toActor));
-                layout.add(pastMessages, 0, 1);
-                layout.add(currentMessageLabel, 0, 2);
-                layout.add(currentMessage, 1, 2);
-                layout.add(sendMessageButton, 0, 3);
-//                layout.add(bloodPressureField, 1, 3);
-//                layout.add(saveButton, 1, 4);
-                layout.add(backButton, 0, 4);});
+                });
+        	layout.add(pastMessages, 0, 1);
+            layout.add(currentMessageLabel, 0, 2);
+            layout.add(currentMessage, 1, 2);
+            layout.add(sendMessageButton, 0, 3);
+//            layout.add(bloodPressureField, 1, 3);
+//            layout.add(saveButton, 1, 4);
+            layout.add(backButton, 0, 4);
         	pastMessages.setText(retrievePastMessages(fromActor, toActor));
         }
         Scene scene = new Scene(layout, 820, 520);
