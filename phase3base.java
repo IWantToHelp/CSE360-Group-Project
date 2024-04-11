@@ -519,7 +519,7 @@ public class phase3base extends Application {
                 if (!patientFile.exists()) {
                     errorMessage.setText("Error: Patient File is not found");
                 } else {
-                    successMessage.setText("Successfully checked in " + patientID);
+                    successMessage.setText("Successfully logged in " + patientID);
                 }
             }
         });
