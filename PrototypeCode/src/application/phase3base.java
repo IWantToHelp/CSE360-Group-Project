@@ -491,7 +491,7 @@ public class phase3base extends Application {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
-
+        MessagingCode doctorMessage = new MessagingCode(this.stage, this);
         // View patient list and select a patient
         Button viewPatientButton = new Button("View Patient");
         
@@ -507,11 +507,11 @@ public class phase3base extends Application {
         // Messaging with patients
         Button messagePatientsButton = new Button("Message Patients");
         
-
+        
         viewPatientButton.setOnAction(e -> new DoctorView(this.stage, this).displayViewPatient());
         enterNotesButton.setOnAction(e -> new DoctorView(this.stage, this).displayEnterExaminationNotes());
         sendMedicationButton.setOnAction(e -> new DoctorView(this.stage, this).displaySendMedication());
-        messagePatientsButton.setOnAction(e -> new DoctorView(this.stage, this).displayMessagePatients());
+        messagePatientsButton.setOnAction(e -> doctorMessage.displayMessageView("Doctor"));
         
         Button backToHomeButton = new Button("Back to Home");
         backToHomeButton.setOnAction(e -> initializeHomeView());
