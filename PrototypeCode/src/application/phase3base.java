@@ -429,7 +429,7 @@ public class phase3base extends Application {
 
  // Add to the PrototypeCode class
 
-    private void displayPatientPortal() {
+    public void displayPatientPortal() {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
