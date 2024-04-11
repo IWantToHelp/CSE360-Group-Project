@@ -64,13 +64,12 @@ public class MessagingCode{
     
     private void displayMessages(String fromActor, String toActor) {
     	//Switch out vbox later
-    	GridPane layout = new GridPane();
+    	VBox layout = new VBox();
+    	layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
-        layout.setVgap(10);
-        layout.setHgap(10);
         layout.setPadding(new Insets(25));
         Label previousMessageLabel = new Label("Previous Messages");
-        TextField pastMessages = new TextField();
+        TextArea pastMessages = new TextArea();
         pastMessages.setEditable(false);
         Label currentMessageLabel = new Label("Message to Send");
         TextField currentMessage = new TextField();
@@ -91,32 +90,33 @@ public class MessagingCode{
         		writeMessage(currentMessage.getText(), patientID, fromActor, toActor);
         		pastMessages.setText(retrievePastMessages(patientID, fromActor, toActor));});
         	// adds the components to the layout
-            layout.add(enterPatientIDLabel, 0, 0);
-            layout.add(enterPatientID, 1, 0);
-            layout.add(previousMessageLabel, 0, 1);
-            layout.add(pastMessages, 1, 1);
-            layout.add(currentMessageLabel, 0, 2);
-            layout.add(currentMessage, 1, 2);
-            layout.add(sendMessageButton, 0, 3);
-//            layout.add(bloodPressureField, 1, 3);
-//            layout.add(saveButton, 1, 4);
-            layout.add(backButton, 0, 4);
-            layout.add(errorMessage, 0, 4);
+//            layout.add(enterPatientIDLabel, 0, 0);
+//            layout.add(enterPatientID, 1, 0);
+//            layout.add(previousMessageLabel, 0, 1);
+//            layout.add(pastMessages, 1, 1);
+//            layout.add(currentMessageLabel, 0, 2);
+//            layout.add(currentMessage, 1, 2);
+//            layout.add(sendMessageButton, 0, 3);
+////            layout.add(bloodPressureField, 1, 3);
+////            layout.add(saveButton, 1, 4);
+//            layout.add(backButton, 0, 4);
+//            layout.add(errorMessage, 0, 4);
+            layout.getChildren().addAll(enterPatientIDLabel,enterPatientID,previousMessageLabel,pastMessages,currentMessageLabel,currentMessage,sendMessageButton,backButton,errorMessage);
         }
         else {
         	sendMessageButton.setOnAction(e -> {
         		writeMessage(currentMessage.getText(), fromActor, toActor);
         		pastMessages.setText(retrievePastMessages(fromActor, toActor));
                 });
-        	layout.add(previousMessageLabel, 0, 1);
-        	layout.add(pastMessages, 0, 1);
-            layout.add(currentMessageLabel, 0, 2);
-            layout.add(currentMessage, 1, 2);
-            layout.add(sendMessageButton, 0, 3);
-//            layout.add(bloodPressureField, 1, 3);
-//            layout.add(saveButton, 1, 4);
-            layout.add(backButton, 0, 4);
+//        	layout.add(pastMessages, 0, 1);
+//            layout.add(currentMessageLabel, 0, 2);
+//            layout.add(currentMessage, 1, 2);
+//            layout.add(sendMessageButton, 0, 3);
+////            layout.add(bloodPressureField, 1, 3);
+////            layout.add(saveButton, 1, 4);
+//            layout.add(backButton, 0, 4);
         	pastMessages.setText(retrievePastMessages(fromActor, toActor));
+        	layout.getChildren().addAll(previousMessageLabel,pastMessages,currentMessageLabel,currentMessage,sendMessageButton,backButton,errorMessage);
         }
         Scene scene = new Scene(layout, 820, 520);
         stage.setScene(scene);
