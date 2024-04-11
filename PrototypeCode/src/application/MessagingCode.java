@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -27,9 +29,17 @@ public class MessagingCode{
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
         Label messageLabel = new Label("Who Would you Like to message?");
+        messageLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        messageLabel.setStyle("-fx-text-fill: #000000;");
         Button patientButton = new Button("Patient");
+        patientButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        patientButton.setStyle("-fx-text-fill: #000000;");
         Button doctorButton = new Button("Doctor");
+        doctorButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        doctorButton.setStyle("-fx-text-fill: #000000;");
         Button nurseButton = new Button("Nurse");
+        nurseButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        nurseButton.setStyle("-fx-text-fill: #000000;");
         // Example patient list for demonstration purposes
         // In a real application, you'd dynamically generate this based on patient data
         Button backButton;
@@ -39,6 +49,8 @@ public class MessagingCode{
     		nurseButton.setOnAction(e -> displayMessages("Doctor", "Nurse"));
     		patientButton.setOnAction(e -> displayMessages("Doctor", "Patient"));
     		backButton = createBackMainButton("Doctor");
+    		backButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+            backButton.setStyle("-fx-text-fill: #000000;");
     		layout.getChildren().addAll(messageLabel, patientButton, nurseButton, backButton);
     		break;
     	case "Nurse":
@@ -46,6 +58,8 @@ public class MessagingCode{
     		patientButton.setOnAction(e -> displayMessages("Nurse", "Patient"));
     		doctorButton.setOnAction(e -> displayMessages("Nurse", "Doctor"));
     		backButton = createBackMainButton("Nurse");
+    		backButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+            backButton.setStyle("-fx-text-fill: #000000;");
     		layout.getChildren().addAll(messageLabel, patientButton, doctorButton, backButton);
     		break;
     	case "Patient":
@@ -53,6 +67,8 @@ public class MessagingCode{
     		nurseButton.setOnAction(e -> displayMessages("Patient", "Nurse"));
     		doctorButton.setOnAction(e -> displayMessages("Patient", "Doctor"));
     		backButton = createBackMainButton("Patient");
+    		backButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+            backButton.setStyle("-fx-text-fill: #000000;");
     		layout.getChildren().addAll(messageLabel, doctorButton, nurseButton, backButton);
     		break;
     	default:
@@ -69,16 +85,24 @@ public class MessagingCode{
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(25));
         Label previousMessageLabel = new Label("Previous Messages");
+        previousMessageLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        previousMessageLabel.setStyle("-fx-text-fill: #000000;");
         TextArea pastMessages = new TextArea();
         pastMessages.setEditable(false);
         Label currentMessageLabel = new Label("Message to Send");
+        currentMessageLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        currentMessageLabel.setStyle("-fx-text-fill: #000000;");
         TextField currentMessage = new TextField();
         currentMessage.setPromptText("Enter Message");
         Button sendMessageButton = new Button("Send");
+        sendMessageButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        sendMessageButton.setStyle("-fx-text-fill: #000000;");
         Button backButton = createBackMessageButton(fromActor);
         Label errorMessage= new Label(); 
         if(fromActor.equals("Patient") || toActor.equals("Patient")) {
         	Label enterPatientIDLabel = new Label("Please Enter Patient ID");
+        	enterPatientIDLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        	enterPatientIDLabel.setStyle("-fx-text-fill: #000000;");
         	TextField enterPatientID = new TextField();
         	enterPatientID.setPromptText("Enter Patient ID");
         	sendMessageButton.setOnAction(e -> {
@@ -228,6 +252,8 @@ public class MessagingCode{
     
     private Button createBackMainButton(String actor) {
         Button backButton = new Button("Back to Previous Page");
+        backButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        backButton.setStyle("-fx-text-fill: #000000;");
         switch (actor) {
     	case "Doctor":
     		backButton.setOnAction(e -> app.displayDoctorPortal()); // Use app reference here
@@ -245,6 +271,8 @@ public class MessagingCode{
     }
     private Button createBackMessageButton(String actor) {
         Button backButton = new Button("Back to Previous Page");
+        backButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        backButton.setStyle("-fx-text-fill: #000000;");
         backButton.setOnAction(e -> displayMessageView(actor));
         return backButton;
     }

@@ -70,6 +70,8 @@ public class phase3base extends Application {
         layout.setPadding(new Insets(25));
 
         Label userTypeLabel = new Label("User Type:");
+        userTypeLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        userTypeLabel.setStyle("-fx-text-fill: #000000;");
         ComboBox<String> userTypeComboBox = new ComboBox<>();
         userTypeComboBox.getItems().addAll("Patient", "Nurse", "Doctor");
         userTypeComboBox.setValue("Patient");
@@ -80,6 +82,8 @@ public class phase3base extends Application {
         passwordField.setPromptText("Password");
 
         Button loginButton = new Button("Log In");
+        loginButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 14));
+        loginButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #000000;");
         Label errorMessage = new Label("Invalid ID or Password");
         errorMessage.setStyle("-fx-text-fill: #000000;");
         errorMessage.setVisible(false);
@@ -147,13 +151,22 @@ public class phase3base extends Application {
         });
 
         Button backButton = new Button("Back");
+        backButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 14));
+        backButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #000000;");
         backButton.setOnAction(e -> initializeHomeView());
+        
+        Label enterLabel = new Label("Enter ID:");
+        enterLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        enterLabel.setStyle("-fx-text-fill: #000000;");
+        Label passLabel = new Label("Password:");
+        passLabel .setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        passLabel.setStyle("-fx-text-fill: #000000;");
 
         layout.add(userTypeLabel, 0, 0);
         layout.add(userTypeComboBox, 1, 0);
-        layout.add(new Label("Enter ID:"), 0, 1);
+        layout.add(enterLabel, 0, 1);
         layout.add(usernameField, 1, 1);
-        layout.add(new Label("Password:"), 0, 2);
+        layout.add(passLabel, 0, 2);
         layout.add(passwordField, 1, 2);
         layout.add(loginButton, 1, 3);
         layout.add(backButton, 1, 4);
@@ -558,8 +571,14 @@ public class phase3base extends Application {
 
         // Nurse-specific functionality buttons
         Button checkInPatientButton = new Button("Check-In Patient");
+        checkInPatientButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        checkInPatientButton.setStyle("-fx-text-fill: #000000;");
         Button recordVitalsButton = new Button("Record Patient Vitals");
+        recordVitalsButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        recordVitalsButton.setStyle("-fx-text-fill: #000000;");
         Button viewPatientHistoryButton = new Button("View Patient History");
+        viewPatientHistoryButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        viewPatientHistoryButton.setStyle("-fx-text-fill: #000000;");
 
 
         // NurseView actions setup
@@ -569,9 +588,17 @@ public class phase3base extends Application {
 
 
         Button backToHomeButton = new Button("Back to Home");
+        backToHomeButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        backToHomeButton.setStyle("-fx-text-fill: #000000;");
+        
         backToHomeButton.setOnAction(e -> initializeHomeView());
+        
+        Label nurseTitle = new Label("Nurse Portal");
+        nurseTitle.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
+        nurseTitle.setStyle("-fx-text-fill: #000000;");
+        
 
-        layout.getChildren().addAll(new Label("Nurse Portal"), checkInPatientButton, recordVitalsButton, viewPatientHistoryButton, backToHomeButton);
+        layout.getChildren().addAll(nurseTitle, checkInPatientButton, recordVitalsButton, viewPatientHistoryButton, backToHomeButton);
 
         Scene nursePortalScene = new Scene(layout, 820, 520);
         stage.setScene(nursePortalScene);
@@ -584,19 +611,27 @@ public class phase3base extends Application {
         MessagingCode doctorMessage = new MessagingCode(this.stage, this);
         // View patient list and select a patient
         Button viewPatientButton = new Button("View Patient");
+        viewPatientButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        viewPatientButton.setStyle("-fx-text-fill: #000000;");
         
 
         // Enter examination notes
         Button enterNotesButton = new Button("Enter Examination Notes");
+        enterNotesButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        enterNotesButton.setStyle("-fx-text-fill: #000000;");
        
 
         // Send medication
         Button sendMedicationButton = new Button("Send Medication");
-        
+        sendMedicationButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        sendMedicationButton.setStyle("-fx-text-fill: #000000;");
+       
+  
 
         // Messaging with patients
         Button messagePatientsButton = new Button("Message Patients");
-        
+        messagePatientsButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        messagePatientsButton.setStyle("-fx-text-fill: #000000;");
         
         viewPatientButton.setOnAction(e -> new DoctorView(this.stage, this).displayViewPatient());
         enterNotesButton.setOnAction(e -> new DoctorView(this.stage, this).displayEnterExaminationNotes());
@@ -604,9 +639,16 @@ public class phase3base extends Application {
         messagePatientsButton.setOnAction(e -> doctorMessage.displayMessageView("Doctor"));
         
         Button backToHomeButton = new Button("Back to Home");
+        backToHomeButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        backToHomeButton.setStyle("-fx-text-fill: #000000;");
+        
         backToHomeButton.setOnAction(e -> initializeHomeView());
+        
+        Label doctorPortalTitle = new Label("Doctor Portal");
+        doctorPortalTitle.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
+        doctorPortalTitle.setStyle("-fx-text-fill: #000000;");
 
-        layout.getChildren().addAll(new Label("Doctor Portal"), viewPatientButton, enterNotesButton, sendMedicationButton, messagePatientsButton, backToHomeButton);
+        layout.getChildren().addAll(doctorPortalTitle, viewPatientButton, enterNotesButton, sendMedicationButton, messagePatientsButton, backToHomeButton);
 
         Scene doctorPortalScene = new Scene(layout, 820, 520);
         stage.setScene(doctorPortalScene);
