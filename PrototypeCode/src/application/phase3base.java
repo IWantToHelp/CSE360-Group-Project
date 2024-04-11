@@ -454,6 +454,32 @@ public class phase3base extends Application {
         Scene patientHistoryScene = new Scene(layout, 820, 520);
         stage.setScene(patientHistoryScene);
     }
+    
+    private void displayPatientHistorySceneII(String patientID)
+    {
+    	VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        // this is so it reads through all the lines of the file
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get(patientID + "_PatientInfo.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        TextArea historyTextArea = new TextArea(); // this is where the patient history is then displayed
+        historyTextArea.setEditable(false);
+        for (String line : lines) {
+            historyTextArea.appendText(line + "\n");
+        }
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> displayPatientPortal());
+        layout.getChildren().addAll(new Label("Patient History"), historyTextArea, backButton);
+        Scene patientHistoryScene = new Scene(layout, 820, 520);
+        stage.setScene(patientHistoryScene);
+    }
 
 
  // Add to the PrototypeCode class
@@ -504,7 +530,7 @@ public class phase3base extends Application {
                 if (!patientFile.exists()) {
                     errorMessage.setText("Error: Patient File is not found"); // if file not found error is displayed
                 } else {
-                    displayPatientHistoryScene(patientID); // displays if the file is found
+                    displayPatientHistorySceneII(patientID); // displays if the file is found
                 }
             }
         });
