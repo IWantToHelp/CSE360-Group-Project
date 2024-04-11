@@ -168,6 +168,8 @@ public class MessagingCode{
     	String convoFile = patientID+"_";
     	switch (fromActor) {
     	case "Doctor":
+    		convoFile += fromActor + ".txt";
+    		break;
     	case "Nurse":
     		convoFile += fromActor + ".txt";
     		break;
@@ -215,12 +217,11 @@ public class MessagingCode{
     private void writeMessage(String message, String patientID, String fromActor, String toActor) {
     	String fileName = patientID+"_";
     	try {
-    		FileWriter fw = new FileWriter(fileName, true);
-            BufferedWriter bw = new BufferedWriter(fw);
     		switch (fromActor) {
         	case "Doctor":
-        	case "Nurse":
-        		fileName += fromActor;
+        		fileName += fromActor + ".txt";
+        		FileWriter fw = new FileWriter(fileName, true);
+                BufferedWriter bw = new BufferedWriter(fw);
         		// writes the new vital signs to the file
                 bw.write(fromActor+ ": " + message);
                 bw.newLine(); // Add a new line for readability
@@ -228,18 +229,31 @@ public class MessagingCode{
                 bw.close();
                 fw.close();
         		break;
+        	case "Nurse":
+        		fileName += fromActor + ".txt";
+        		FileWriter filew = new FileWriter(fileName, true);
+                BufferedWriter buffw = new BufferedWriter(filew);
+        		// writes the new vital signs to the file
+                buffw.write(fromActor+ ": " + message);
+                buffw.newLine(); // Add a new line for readability
+                // closes the file reader/writer and buffered reader/writer
+                buffw.close();
+                filew.close();
+        		break;
         	case "Patient":
-        		BufferedReader br = new BufferedReader(new FileReader(patientID+"_PatientInfo.txt"));
+        		BufferedReader br = new BufferedReader(new FileReader(patientID + "_PatientInfo.txt"));
+        		fileName += toActor + ".txt";
+        		FileWriter filewrite = new FileWriter(fileName, true);
+                BufferedWriter buffwrite = new BufferedWriter(filewrite);
         		br.readLine();
         		br.readLine();
         		String patientName = br.readLine(); 
         		br.close();
-        		fileName += toActor;
-        		bw.write(patientName+ ": " + message);
-                bw.newLine(); // Add a new line for readability
+        		buffwrite.write(patientName+ ": " + message);
+        		buffwrite.newLine(); // Add a new line for readability
                 // closes the file reader/writer and buffered reader/writer
-                bw.close();
-                fw.close();
+        		buffwrite.close();
+        		filewrite.close();
         		break;
         	default:
         		System.out.println("Incorrect Actor Given");

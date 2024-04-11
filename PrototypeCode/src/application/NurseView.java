@@ -144,6 +144,7 @@ public class NurseView {
         Scene scene = new Scene(layout, 820, 520);
         stage.setScene(scene);
     }
+    
 
     public void displayPatientHistory() {
         VBox layout = new VBox(10);
