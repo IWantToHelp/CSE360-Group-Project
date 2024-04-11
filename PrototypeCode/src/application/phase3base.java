@@ -1,9 +1,13 @@
 package application;
 
+import java.io.BufferedWriter; // I imported the Buffered Writer so it can overwrite .txt files
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Paths; // makes it easier to look through files
+import java.util.List;
 import java.time.LocalDate;
 import java.util.Random;
 
@@ -425,7 +429,32 @@ public class phase3base extends Application {
 		errorMessage.setText("Error, information not properly collected: " + e.getMessage());
 	}
 }
-    		
+    private void displayPatientHistoryScene(String patientID)
+    {
+    	VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        // this is so it reads through all the lines of the file
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get(patientID + "_PatientInfo.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        TextArea historyTextArea = new TextArea(); // this is where the patient history is then displayed
+        historyTextArea.setEditable(false);
+        for (String line : lines) {
+            historyTextArea.appendText(line + "\n");
+        }
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> displayNursePortal());
+        layout.getChildren().addAll(new Label("Patient History"), historyTextArea, backButton);
+        Scene patientHistoryScene = new Scene(layout, 820, 520);
+        stage.setScene(patientHistoryScene);
+    }
+
 
  // Add to the PrototypeCode class
 
@@ -433,7 +462,29 @@ public class phase3base extends Application {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
-
+        
+        Text errorMessage = new Text();
+        Text successMessage = new Text();
+        
+        TextField patientIDField = new TextField();
+        patientIDField.setPromptText("Re-Enter Patient ID");
+        Button checkInButton = new Button("Confirm");
+        checkInButton.setOnAction(e -> {
+            String patientID = patientIDField.getText().trim();
+            // Makes sure the patient ID is 5 digits long
+            if (patientID.length() != 5 || !patientID.matches("\\d+")) {
+                errorMessage.setText("Error: Patient ID is invalid");
+            } else {
+                File patientFile = new File(patientID + "_PatientInfo.txt");
+                // if patientFile not found it displays the error
+                if (!patientFile.exists()) {
+                    errorMessage.setText("Error: Patient File is not found");
+                } else {
+                    successMessage.setText("Successfully checked in " + patientID);
+                }
+            }
+        });
+           
         // Patient's personal information section
         Button updateInfoButton = new Button("Update Personal Information");
         updateInfoButton.setOnAction(e -> {
@@ -441,21 +492,34 @@ public class phase3base extends Application {
         });
 
         // Viewing past visits and health records
-        Button viewPastVisitsButton = new Button("View Past Visits");
-        viewPastVisitsButton.setOnAction(e -> {
-            // Placeholder for view past visits logic
+        Button viewHistoryButton = new Button("View Patient History");
+        viewHistoryButton.setOnAction(e -> {
+            // Placeholder for viewing patient history logic
+        	String patientID = patientIDField.getText().trim();
+            // makes sure the patient ID is 5 digits long
+            if (patientID.length() != 5 || !patientID.matches("\\d+")) {
+                errorMessage.setText("Error: Patient ID is invalid"); // if the patient ID is not 5 digits long, then an error is displayed
+            } else {
+                File patientFile = new File(patientID + "_PatientInfo.txt"); // // opens file if found
+                if (!patientFile.exists()) {
+                    errorMessage.setText("Error: Patient File is not found"); // if file not found error is displayed
+                } else {
+                    displayPatientHistoryScene(patientID); // displays if the file is found
+                }
+            }
         });
 
         // Messaging with doctor/nurse
         Button messageDoctorButton = new Button("Message Doctor/Nurse");
+        MessagingCode patientMessages = new MessagingCode(this.stage, this);
         messageDoctorButton.setOnAction(e -> {
-            // Placeholder for messaging logic
+            patientMessages.displayMessageView("Patient");
         });
 
         Button backToHomeButton = new Button("Back to Home");
         backToHomeButton.setOnAction(e -> initializeHomeView());
 
-        layout.getChildren().addAll(new Label("Patient Portal"), updateInfoButton, viewPastVisitsButton, messageDoctorButton, backToHomeButton);
+        layout.getChildren().addAll(new Label("Patient Portal"), patientIDField, checkInButton, updateInfoButton, viewHistoryButton, messageDoctorButton, backToHomeButton, errorMessage, successMessage);
 
         Scene patientPortalScene = new Scene(layout, 820, 520);
         stage.setScene(patientPortalScene);
