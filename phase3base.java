@@ -1,9 +1,13 @@
 package application;
 
+import java.io.BufferedWriter; // I imported the Buffered Writer so it can overwrite .txt files
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Paths; // makes it easier to look through files
+import java.util.List;
 import java.time.LocalDate;
 import java.util.Random;
 
@@ -66,6 +70,8 @@ public class phase3base extends Application {
         layout.setPadding(new Insets(25));
 
         Label userTypeLabel = new Label("User Type:");
+        userTypeLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        userTypeLabel.setStyle("-fx-text-fill: #000000;");
         ComboBox<String> userTypeComboBox = new ComboBox<>();
         userTypeComboBox.getItems().addAll("Patient", "Nurse", "Doctor");
         userTypeComboBox.setValue("Patient");
@@ -76,6 +82,8 @@ public class phase3base extends Application {
         passwordField.setPromptText("Password");
 
         Button loginButton = new Button("Log In");
+        loginButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 14));
+        loginButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #000000;");
         Label errorMessage = new Label("Invalid ID or Password");
         errorMessage.setStyle("-fx-text-fill: #000000;");
         errorMessage.setVisible(false);
@@ -143,13 +151,22 @@ public class phase3base extends Application {
         });
 
         Button backButton = new Button("Back");
+        backButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 14));
+        backButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #000000;");
         backButton.setOnAction(e -> initializeHomeView());
+        
+        Label enterLabel = new Label("Enter ID:");
+        enterLabel.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        enterLabel.setStyle("-fx-text-fill: #000000;");
+        Label passLabel = new Label("Password:");
+        passLabel .setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        passLabel.setStyle("-fx-text-fill: #000000;");
 
         layout.add(userTypeLabel, 0, 0);
         layout.add(userTypeComboBox, 1, 0);
-        layout.add(new Label("Enter ID:"), 0, 1);
+        layout.add(enterLabel, 0, 1);
         layout.add(usernameField, 1, 1);
-        layout.add(new Label("Password:"), 0, 2);
+        layout.add(passLabel, 0, 2);
         layout.add(passwordField, 1, 2);
         layout.add(loginButton, 1, 3);
         layout.add(backButton, 1, 4);
@@ -425,15 +442,88 @@ public class phase3base extends Application {
 		errorMessage.setText("Error, information not properly collected: " + e.getMessage());
 	}
 }
-    		
+    private void displayPatientHistoryScene(String patientID)
+    {
+    	VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        // this is so it reads through all the lines of the file
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get(patientID + "_PatientInfo.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        TextArea historyTextArea = new TextArea(); // this is where the patient history is then displayed
+        historyTextArea.setEditable(false);
+        for (String line : lines) {
+            historyTextArea.appendText(line + "\n");
+        }
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> displayNursePortal());
+        layout.getChildren().addAll(new Label("Patient History"), historyTextArea, backButton);
+        Scene patientHistoryScene = new Scene(layout, 820, 520);
+        stage.setScene(patientHistoryScene);
+    }
+    
+    private void displayPatientHistorySceneII(String patientID)
+    {
+    	VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        // this is so it reads through all the lines of the file
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get(patientID + "_PatientInfo.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        TextArea historyTextArea = new TextArea(); // this is where the patient history is then displayed
+        historyTextArea.setEditable(false);
+        for (String line : lines) {
+            historyTextArea.appendText(line + "\n");
+        }
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> displayPatientPortal());
+        layout.getChildren().addAll(new Label("Patient History"), historyTextArea, backButton);
+        Scene patientHistoryScene = new Scene(layout, 820, 520);
+        stage.setScene(patientHistoryScene);
+    }
+
 
  // Add to the PrototypeCode class
 
-    private void displayPatientPortal() {
+    public void displayPatientPortal() {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
-
+        
+        Text errorMessage = new Text();
+        Text successMessage = new Text();
+        
+        TextField patientIDField = new TextField();
+        patientIDField.setPromptText("Re-Enter Patient ID");
+        Button checkInButton = new Button("Confirm");
+        checkInButton.setOnAction(e -> {
+            String patientID = patientIDField.getText().trim();
+            // Makes sure the patient ID is 5 digits long
+            if (patientID.length() != 5 || !patientID.matches("\\d+")) {
+                errorMessage.setText("Error: Patient ID is invalid");
+            } else {
+                File patientFile = new File(patientID + "_PatientInfo.txt");
+                // if patientFile not found it displays the error
+                if (!patientFile.exists()) {
+                    errorMessage.setText("Error: Patient File is not found");
+                } else {
+                    successMessage.setText("Successfully checked in " + patientID);
+                }
+            }
+        });
+           
         // Patient's personal information section
         Button updateInfoButton = new Button("Update Personal Information");
         updateInfoButton.setOnAction(e -> {
@@ -441,93 +531,124 @@ public class phase3base extends Application {
         });
 
         // Viewing past visits and health records
-        Button viewPastVisitsButton = new Button("View Past Visits");
-        viewPastVisitsButton.setOnAction(e -> {
-            // Placeholder for view past visits logic
+        Button viewHistoryButton = new Button("View Patient History");
+        viewHistoryButton.setOnAction(e -> {
+            // Placeholder for viewing patient history logic
+        	String patientID = patientIDField.getText().trim();
+            // makes sure the patient ID is 5 digits long
+            if (patientID.length() != 5 || !patientID.matches("\\d+")) {
+                errorMessage.setText("Error: Patient ID is invalid"); // if the patient ID is not 5 digits long, then an error is displayed
+            } else {
+                File patientFile = new File(patientID + "_PatientInfo.txt"); // // opens file if found
+                if (!patientFile.exists()) {
+                    errorMessage.setText("Error: Patient File is not found"); // if file not found error is displayed
+                } else {
+                    displayPatientHistorySceneII(patientID); // displays if the file is found
+                }
+            }
         });
 
         // Messaging with doctor/nurse
         Button messageDoctorButton = new Button("Message Doctor/Nurse");
+        MessagingCode patientMessages = new MessagingCode(this.stage, this);
         messageDoctorButton.setOnAction(e -> {
-            // Placeholder for messaging logic
+            patientMessages.displayMessageView("Patient");
         });
 
         Button backToHomeButton = new Button("Back to Home");
         backToHomeButton.setOnAction(e -> initializeHomeView());
 
-        layout.getChildren().addAll(new Label("Patient Portal"), updateInfoButton, viewPastVisitsButton, messageDoctorButton, backToHomeButton);
+        layout.getChildren().addAll(new Label("Patient Portal"), patientIDField, checkInButton, updateInfoButton, viewHistoryButton, messageDoctorButton, backToHomeButton, errorMessage, successMessage);
 
         Scene patientPortalScene = new Scene(layout, 820, 520);
         stage.setScene(patientPortalScene);
     }
 
-    private void displayNursePortal() {
+    void displayNursePortal() {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
-        // Check-in process
-        TextField patientIDField = new TextField();
-        patientIDField.setPromptText("Enter Patient ID for Check-In");
-        Button checkInButton = new Button("Check-In Patient");
-        checkInButton.setOnAction(e -> {
-            // Placeholder for check-in logic
-        });
-
-        // Record patient vitals
+        // Nurse-specific functionality buttons
+        Button checkInPatientButton = new Button("Check-In Patient");
+        checkInPatientButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        checkInPatientButton.setStyle("-fx-text-fill: #000000;");
         Button recordVitalsButton = new Button("Record Patient Vitals");
-        recordVitalsButton.setOnAction(e -> {
-            // Placeholder for recording vitals logic
-        });
+        recordVitalsButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        recordVitalsButton.setStyle("-fx-text-fill: #000000;");
+        Button viewPatientHistoryButton = new Button("View Patient History");
+        viewPatientHistoryButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        viewPatientHistoryButton.setStyle("-fx-text-fill: #000000;");
 
-        // View patient history
-        Button viewHistoryButton = new Button("View Patient History");
-        viewHistoryButton.setOnAction(e -> {
-            // Placeholder for viewing patient history logic
-        });
+
+        // NurseView actions setup
+        checkInPatientButton.setOnAction(e -> new NurseView(this.stage, this).displayCheckInPatient());
+        recordVitalsButton.setOnAction(e -> new NurseView(this.stage, this).displayRecordVitals());
+        viewPatientHistoryButton.setOnAction(e -> new NurseView(this.stage, this).displayPatientHistory());
+
 
         Button backToHomeButton = new Button("Back to Home");
+        backToHomeButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 18));
+        backToHomeButton.setStyle("-fx-text-fill: #000000;");
+        
         backToHomeButton.setOnAction(e -> initializeHomeView());
+        
+        Label nurseTitle = new Label("Nurse Portal");
+        nurseTitle.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
+        nurseTitle.setStyle("-fx-text-fill: #000000;");
+        
 
-        layout.getChildren().addAll(new Label("Nurse Portal"), patientIDField, checkInButton, recordVitalsButton, viewHistoryButton, backToHomeButton);
+        layout.getChildren().addAll(nurseTitle, checkInPatientButton, recordVitalsButton, viewPatientHistoryButton, backToHomeButton);
 
         Scene nursePortalScene = new Scene(layout, 820, 520);
         stage.setScene(nursePortalScene);
     }
-
-    private void displayDoctorPortal() {
+    
+    void displayDoctorPortal() {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
-
+        MessagingCode doctorMessage = new MessagingCode(this.stage, this);
         // View patient list and select a patient
-        Button viewPatientsButton = new Button("View Patients");
-        viewPatientsButton.setOnAction(e -> {
-            // Placeholder for view patients logic
-        });
+        Button viewPatientButton = new Button("View Patient");
+        viewPatientButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        viewPatientButton.setStyle("-fx-text-fill: #000000;");
+        
 
         // Enter examination notes
         Button enterNotesButton = new Button("Enter Examination Notes");
-        enterNotesButton.setOnAction(e -> {
-            // Placeholder for entering notes logic
-        });
+        enterNotesButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        enterNotesButton.setStyle("-fx-text-fill: #000000;");
+       
 
         // Send medication
         Button sendMedicationButton = new Button("Send Medication");
-        sendMedicationButton.setOnAction(e -> {
-            // Placeholder for send medication logic
-        });
+        sendMedicationButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        sendMedicationButton.setStyle("-fx-text-fill: #000000;");
+       
+  
 
         // Messaging with patients
         Button messagePatientsButton = new Button("Message Patients");
-        messagePatientsButton.setOnAction(e -> {
-            // Placeholder for messaging logic
-        });
-
+        messagePatientsButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        messagePatientsButton.setStyle("-fx-text-fill: #000000;");
+        
+        viewPatientButton.setOnAction(e -> new DoctorView(this.stage, this).displayViewPatient());
+        enterNotesButton.setOnAction(e -> new DoctorView(this.stage, this).displayEnterExaminationNotes());
+        sendMedicationButton.setOnAction(e -> new DoctorView(this.stage, this).displaySendMedication());
+        messagePatientsButton.setOnAction(e -> doctorMessage.displayMessageView("Doctor"));
+        
         Button backToHomeButton = new Button("Back to Home");
+        backToHomeButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 16));
+        backToHomeButton.setStyle("-fx-text-fill: #000000;");
+        
         backToHomeButton.setOnAction(e -> initializeHomeView());
+        
+        Label doctorPortalTitle = new Label("Doctor Portal");
+        doctorPortalTitle.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
+        doctorPortalTitle.setStyle("-fx-text-fill: #000000;");
 
-        layout.getChildren().addAll(new Label("Doctor Portal"), viewPatientsButton, enterNotesButton, sendMedicationButton, messagePatientsButton, backToHomeButton);
+        layout.getChildren().addAll(doctorPortalTitle, viewPatientButton, enterNotesButton, sendMedicationButton, messagePatientsButton, backToHomeButton);
 
         Scene doctorPortalScene = new Scene(layout, 820, 520);
         stage.setScene(doctorPortalScene);
