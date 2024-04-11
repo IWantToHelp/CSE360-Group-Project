@@ -108,6 +108,7 @@ public class MessagingCode{
         		writeMessage(currentMessage.getText(), fromActor, toActor);
         		pastMessages.setText(retrievePastMessages(fromActor, toActor));
                 });
+        	layout.add(previousMessageLabel, 0, 1);
         	layout.add(pastMessages, 0, 1);
             layout.add(currentMessageLabel, 0, 2);
             layout.add(currentMessage, 1, 2);
