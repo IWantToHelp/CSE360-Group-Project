@@ -271,7 +271,7 @@ public class phase3base extends Application {
         layout.setHgap(10);
         layout.setPadding(new Insets(25));
 
-        // Creating form fields for patient registration
+        // Creating form fields for updating patient information
         TextField firstNameField = new TextField();
         firstNameField.setPromptText("First Name");
         TextField lastNameField = new TextField();
@@ -292,19 +292,16 @@ public class phase3base extends Application {
         pharmacyAddressField.setPromptText("Preferred Pharmacy Address");
         TextField patientIDField = new TextField();
         patientIDField.setPromptText("Enter your ID");
-        // Password fields for account creation
+        
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Create Password");
         PasswordField confirmPasswordField = new PasswordField();
         confirmPasswordField.setPromptText("Confirm Password");
 
-        // Registration button
         Button saveButton = new Button("Save");
-        // Placeholder for registration logic; add actual logic for handling registration
-
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> initializeHomeView());
-        
+        backButton.setOnAction(e -> displayPatientPortal()); // Navigates back to the patient portal
+
         Text errorMessage = new Text();
 
         // Adding fields to the layout
@@ -339,34 +336,33 @@ public class phase3base extends Application {
 
         Scene updateScene = new Scene(layout, 820, 520);
         stage.setScene(updateScene);
-       
-        //error handling if passwords aren't the same is needed
-        
-         //creating the save button
+
         saveButton.setFont(Font.font("Helvetica",FontWeight.BOLD, 20));
         saveButton.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #ffffff;");
-        saveButton.setOnAction(e ->{  
+        saveButton.setOnAction(e -> {  
             if(firstNameField.getText().isEmpty() || lastNameField.getText().isEmpty() || birthDatePicker.getValue() == null || phoneField.getText().isEmpty() ||
-            		emailField.getText().isEmpty() || addressField.getText().isEmpty() || insuranceProviderField.getText().isEmpty() || policyNumberField.getText().isEmpty() ||
-            		pharmacyAddressField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPasswordField.getText().isEmpty() || patientIDField.getText().isEmpty()){
-            	errorMessage.setText("Error: A field is missing");
+                    emailField.getText().isEmpty() || addressField.getText().isEmpty() || insuranceProviderField.getText().isEmpty() || policyNumberField.getText().isEmpty() ||
+                    pharmacyAddressField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPasswordField.getText().isEmpty() || patientIDField.getText().isEmpty()) {
+                errorMessage.setText("Error: A field is missing");
             } else {
-            	updatePatientFile(patientIDField.getText(), firstNameField.getText(), lastNameField.getText(), birthDatePicker.getValue(), phoneField.getText(),
-            			emailField.getText(), addressField.getText(), insuranceProviderField.getText(), policyNumberField.getText(), pharmacyAddressField.getText(), passwordField.getText(), confirmPasswordField.getText(), errorMessage);
-            	patientIDField.clear();
-            	firstNameField.clear();
-            	lastNameField.clear();
-            	birthDatePicker.setValue(null);
-            	phoneField.clear();
-            	emailField.clear();
-            	addressField.clear();
-            	insuranceProviderField.clear();
-            	policyNumberField.clear();
-            	pharmacyAddressField.clear();
-            	passwordField.clear();
-            	confirmPasswordField.clear();
-         }}); //saving the information gathered
+                updatePatientFile(patientIDField.getText(), firstNameField.getText(), lastNameField.getText(), birthDatePicker.getValue(), phoneField.getText(),
+                        emailField.getText(), addressField.getText(), insuranceProviderField.getText(), policyNumberField.getText(), pharmacyAddressField.getText(), passwordField.getText(), confirmPasswordField.getText(), errorMessage);
+                patientIDField.clear();
+                firstNameField.clear();
+                lastNameField.clear();
+                birthDatePicker.setValue(null);
+                phoneField.clear();
+                emailField.clear();
+                addressField.clear();
+                insuranceProviderField.clear();
+                policyNumberField.clear();
+                pharmacyAddressField.clear();
+                passwordField.clear();
+                confirmPasswordField.clear();
+            }
+        }); // Logic for saving updated information
     }
+
     
     
     private void updatePatientFile(String originalPatientID, String firstNameField, String lastNameField, LocalDate birthDatePicker, String phoneField, //save all of the information gathered
@@ -429,7 +425,7 @@ public class phase3base extends Application {
 
  // Add to the PrototypeCode class
 
-    private void displayPatientPortal() {
+    void displayPatientPortal() {
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
@@ -443,7 +439,7 @@ public class phase3base extends Application {
         // Viewing past visits and health records
         Button viewPastVisitsButton = new Button("View Past Visits");
         viewPastVisitsButton.setOnAction(e -> {
-            // Placeholder for view past visits logic
+            new PatientView(this.stage, this).viewPastVisits();
         });
 
         // Messaging with doctor/nurse
@@ -460,6 +456,7 @@ public class phase3base extends Application {
         Scene patientPortalScene = new Scene(layout, 820, 520);
         stage.setScene(patientPortalScene);
     }
+
 
     void displayNursePortal() {
         VBox layout = new VBox(10);

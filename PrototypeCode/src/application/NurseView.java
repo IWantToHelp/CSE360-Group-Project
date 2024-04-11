@@ -62,6 +62,8 @@ public class NurseView {
 
         TextField patientIDField = new TextField();
         patientIDField.setPromptText("Patient ID");
+        DatePicker visitDate = new DatePicker(); // DatePicker for recording the visit date
+        visitDate.setPromptText("Visit Date");
         TextField temperatureField = new TextField();
         temperatureField.setPromptText("Temperature");
         TextField heartRateField = new TextField();
@@ -75,18 +77,25 @@ public class NurseView {
 
         saveButton.setOnAction(e -> {
             String patientID = patientIDField.getText().trim();
+            if (visitDate.getValue() == null) {
+                feedbackText.setText("Please select a date for the visit.");
+                return;
+            }
             try {
-                FileWriter fw = new FileWriter(patientID + "_PatientInfo.txt", true);
+                FileWriter fw = new FileWriter(patientID + "_PatientVisits.txt", true); // Append to the patient's visit file
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter out = new PrintWriter(bw);
 
+                // Writing visit date and vitals to the file
+                out.println("Visit Date: " + visitDate.getValue().toString());
                 out.println("Temperature: " + temperatureField.getText());
                 out.println("Heart Rate: " + heartRateField.getText());
                 out.println("Breathing Rate: " + breathingRateField.getText());
                 out.println("Blood Pressure: " + bloodPressureField.getText());
+                out.println(""); // Adding a blank line for readability
                 out.close();
 
-                feedbackText.setText("Vitals for Patient ID: " + patientID + " saved successfully.");
+                feedbackText.setText("Vitals for Patient ID: " + patientID + " saved successfully on " + visitDate.getValue());
             } catch (IOException ex) {
                 feedbackText.setText("Error saving vitals: " + ex.getMessage());
             }
@@ -97,21 +106,24 @@ public class NurseView {
 
         layout.add(new Label("Patient ID"), 0, 0);
         layout.add(patientIDField, 1, 0);
-        layout.add(new Label("Temperature"), 0, 1);
-        layout.add(temperatureField, 1, 1);
-        layout.add(new Label("Heart Rate"), 0, 2);
-        layout.add(heartRateField, 1, 2);
-        layout.add(new Label("Breathing Rate"), 0, 3);
-        layout.add(breathingRateField, 1, 3);
-        layout.add(new Label("Blood Pressure"), 0, 4);
-        layout.add(bloodPressureField, 1, 4);
-        layout.add(saveButton, 1, 5);
-        layout.add(feedbackText, 1, 6);
-        layout.add(backButton, 1, 7);
+        layout.add(new Label("Visit Date"), 0, 1); // Label for the visit date
+        layout.add(visitDate, 1, 1); // DatePicker for the visit date
+        layout.add(new Label("Temperature"), 0, 2);
+        layout.add(temperatureField, 1, 2);
+        layout.add(new Label("Heart Rate"), 0, 3);
+        layout.add(heartRateField, 1, 3);
+        layout.add(new Label("Breathing Rate"), 0, 4);
+        layout.add(breathingRateField, 1, 4);
+        layout.add(new Label("Blood Pressure"), 0, 5);
+        layout.add(bloodPressureField, 1, 5);
+        layout.add(saveButton, 1, 6);
+        layout.add(feedbackText, 1, 7);
+        layout.add(backButton, 1, 8);
 
         Scene scene = new Scene(layout, 820, 520);
         stage.setScene(scene);
     }
+
 
     public void displayPatientHistory() {
         VBox layout = new VBox(10);
@@ -126,7 +138,7 @@ public class NurseView {
 
         viewHistoryButton.setOnAction(e -> {
             String patientID = patientIDField.getText().trim();
-            File patientFile = new File(patientID + "_PatientInfo.txt");
+            File patientFile = new File(patientID + "_PatientVisits.txt");
             if (patientFile.exists()) {
                 try {
                     List<String> lines = Files.readAllLines(Paths.get(patientFile.toURI()));
