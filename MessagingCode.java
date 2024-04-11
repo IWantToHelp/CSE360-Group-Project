@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -67,27 +68,57 @@ public class MessagingCode extends Application{
     
     private void displayMessages(String fromActor, String toActor) {
     	//Switch out vbox later
-    	VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
+    	GridPane layout = new GridPane();
         layout.setAlignment(Pos.CENTER);
+        layout.setVgap(10);
+        layout.setHgap(10);
+        layout.setPadding(new Insets(25));
         Label previousMessageLabel = new Label("Previous Messages");
         TextField pastMessages = new TextField();
+        pastMessages.setEditable(false);
         Label currentMessageLabel = new Label("Message to Send");
         TextField currentMessage = new TextField();
         currentMessage.setPromptText("Enter Message");
         Button sendMessageButton = new Button("Send");
         Button backButton = createBackMessageButton(fromActor);
+        Label errorMessage= new Label(); 
         if(fromActor.equals("Patient") || toActor.equals("Patient")) {
         	Label enterPatientIDLabel = new Label("Please Enter Patient ID");
         	TextField enterPatientID = new TextField();
         	enterPatientID.setPromptText("Enter Patient ID");
-        	sendMessageButton.setOnAction(e -> writeMessage(currentMessage.getText(), enterPatientID.getText(), fromActor, toActor));
-        	layout.getChildren().addAll(enterPatientIDLabel, previousMessageLabel, pastMessages, currentMessageLabel, currentMessage, backButton);
+        	sendMessageButton.setOnAction(e -> {
+        		String patientID = enterPatientID.getText();
+        		if (patientID.length() != 5 || !patientID.matches("\\d+")) {
+                    errorMessage.setText("Error: Patient ID is invalid");
+                }
+        		errorMessage.setText("");
+        		writeMessage(currentMessage.getText(), patientID, fromActor, toActor);
+        		pastMessages.setText(retrievePastMessages(patientID, fromActor, toActor));});
+        	// adds the components to the layout
+            layout.add(enterPatientIDLabel, 0, 0);
+            layout.add(enterPatientID, 1, 0);
+            layout.add(previousMessageLabel, 0, 1);
+            layout.add(pastMessages, 1, 1);
+            layout.add(currentMessageLabel, 0, 2);
+            layout.add(currentMessage, 1, 2);
+            layout.add(sendMessageButton, 0, 3);
+//            layout.add(bloodPressureField, 1, 3);
+//            layout.add(saveButton, 1, 4);
+            layout.add(backButton, 0, 4);
+            layout.add(errorMessage, 0, 4);
         }
         else {
-        	sendMessageButton.setOnAction(e -> writeMessage(currentMessage.getText(), fromActor, toActor));
+        	sendMessageButton.setOnAction(e -> {
+        		writeMessage(currentMessage.getText(), fromActor, toActor);
+        		pastMessages.setText(retrievePastMessages(fromActor, toActor));
+                layout.add(pastMessages, 0, 1);
+                layout.add(currentMessageLabel, 0, 2);
+                layout.add(currentMessage, 1, 2);
+                layout.add(sendMessageButton, 0, 3);
+//                layout.add(bloodPressureField, 1, 3);
+//                layout.add(saveButton, 1, 4);
+                layout.add(backButton, 0, 4);});
         	pastMessages.setText(retrievePastMessages(fromActor, toActor));
-        	layout.getChildren().addAll(previousMessageLabel, pastMessages, currentMessageLabel, currentMessage, backButton);
         }
         Scene scene = new Scene(layout, 820, 520);
         stage.setScene(scene);
@@ -117,7 +148,6 @@ public class MessagingCode extends Application{
     	case "Doctor":
     	case "Nurse":
     		convoFile += fromActor + ".txt";
-    		actorName = fromActor;
     		break;
     	case "Patient":
     		convoFile += toActor + ".txt";
